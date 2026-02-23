@@ -80,15 +80,20 @@ function initializeApp() {
   const editorInput = document.getElementById('markdown-input')
   const previewContainer = document.getElementById('preview')
 
-  // Load default example (engineer resume)
-  const defaultContent = examples.engineer
+  // Check for saved content in localStorage, otherwise use default example
+  const savedContent = localStorage.getItem('resume-content')
+  const defaultContent = savedContent || examples.engineer
   editorInput.value = defaultContent
 
   // Initial preview render
   updatePreview()
 
-  // Set up live preview on input
-  editorInput.addEventListener('input', updatePreview)
+  // Set up live preview and localStorage persistence on input
+  editorInput.addEventListener('input', () => {
+    updatePreview()
+    // Save to localStorage on every input
+    localStorage.setItem('resume-content', editorInput.value)
+  })
 
   function updatePreview() {
     const markdownText = editorInput.value

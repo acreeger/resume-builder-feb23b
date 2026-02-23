@@ -79,6 +79,7 @@ p {
   line-height: 1.5;
   resize: none;
   outline: none;
+  min-height: 44px;
 }
 
 #markdown-input:focus {
@@ -157,6 +158,7 @@ p {
   .preview-area {
     padding: 1.5rem;
     min-height: 50vh;
+    padding-bottom: 2rem;
   }
 
   .editor-area {
@@ -167,13 +169,55 @@ p {
   .editor-area h1,
   .preview-area h1 {
     font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  #markdown-input {
+    padding: 1.25rem;
+    font-size: 1rem;
   }
 
   .resume-name {
     font-size: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .section-title {
     font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-content {
+    font-size: 1rem;
+  }
+
+  .section-content h3,
+  .section-content h4 {
+    margin-top: 1.25rem;
+  }
+}
+
+/* Small screens (< 480px) */
+@media (max-width: 480px) {
+  .editor-area,
+  .preview-area {
+    padding: 1rem;
+    padding-bottom: 2rem;
+  }
+
+  .editor-area h1,
+  .preview-area h1 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  #markdown-input {
+    padding: 1rem;
+    font-size: 1rem;
+    min-height: 50vh;
+  }
+
+  .resume-name {
+    font-size: 1.25rem;
   }
 }
