@@ -1,72 +1,9 @@
 import { marked } from 'marked'
 import { examples } from './examples.js'
-
-// Simple placeholder parser that extracts structure from markdown
-function resumeFromMarkdown(text) {
-  const lines = text.split('\n')
-  const resume = {
-    name: '',
-    sections: []
-  }
-
-  let currentSection = null
-  let currentContent = []
-
-  for (const line of lines) {
-    // Check for name (first h1)
-    if (line.startsWith('# ') && !resume.name) {
-      resume.name = line.replace('# ', '').trim()
-    }
-    // Check for section headers (h2)
-    else if (line.startsWith('## ')) {
-      // Save previous section
-      if (currentSection) {
-        resume.sections.push({
-          title: currentSection,
-          content: currentContent.join('\n').trim()
-        })
-      }
-      currentSection = line.replace('## ', '').trim()
-      currentContent = []
-    }
-    // Accumulate content
-    else if (currentSection) {
-      currentContent.push(line)
-    }
-  }
-
-  // Save final section
-  if (currentSection) {
-    resume.sections.push({
-      title: currentSection,
-      content: currentContent.join('\n').trim()
-    })
-  }
-
-  return resume
-}
-
-// Simple render function that creates HTML from parsed resume
-function renderResume(resumeData) {
-  if (!resumeData.name && resumeData.sections.length === 0) {
-    return '<p>Enter markdown content to preview your resume</p>'
-  }
-
-  let html = ''
-
-  if (resumeData.name) {
-    html += `<h1 class="resume-name">${escapeHtml(resumeData.name)}</h1>`
-  }
-
-  for (const section of resumeData.sections) {
-    html += `<section class="resume-section">
-      <h2 class="section-title">${escapeHtml(section.title)}</h2>
-      <div class="section-content">${marked(section.content)}</div>
-    </section>`
-  }
-
-  return html
-}
+import { resumeFromMarkdown } from './parser.js'
+import { renderClassic } from './templates/classic.js'
+import { renderModern } from './templates/modern.js'
+import { renderMinimal } from './templates/minimal.js'
 
 // Helper function to escape HTML
 function escapeHtml(text) {
@@ -79,11 +16,18 @@ function escapeHtml(text) {
 function initializeApp() {
   const editorInput = document.getElementById('markdown-input')
   const previewContainer = document.getElementById('preview')
+  const templateButtons = document.querySelectorAll('.template-btn')
+
+  // State for selected template
+  let selectedTemplate = localStorage.getItem('selected-template') || 'classic'
 
   // Check for saved content in localStorage, otherwise use default example
   const savedContent = localStorage.getItem('resume-content')
   const defaultContent = savedContent || examples.engineer
   editorInput.value = defaultContent
+
+  // Set the active template button on init
+  updateActiveTemplateButton()
 
   // Initial preview render
   updatePreview()
@@ -95,11 +39,47 @@ function initializeApp() {
     localStorage.setItem('resume-content', editorInput.value)
   })
 
+  // Set up template switcher event listeners
+  templateButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      selectedTemplate = button.dataset.template
+      localStorage.setItem('selected-template', selectedTemplate)
+      updateActiveTemplateButton()
+      updatePreview()
+    })
+  })
+
+  function updateActiveTemplateButton() {
+    templateButtons.forEach(button => {
+      button.classList.remove('active')
+      if (button.dataset.template === selectedTemplate) {
+        button.classList.add('active')
+      }
+    })
+  }
+
   function updatePreview() {
     const markdownText = editorInput.value
-    const parsed = resumeFromMarkdown(markdownText)
-    const html = renderResume(parsed)
-    previewContainer.innerHTML = html
+
+    try {
+      const parsed = resumeFromMarkdown(markdownText)
+
+      // Select the appropriate render function based on selected template
+      let html = ''
+      if (selectedTemplate === 'modern') {
+        html = renderModern(parsed)
+      } else if (selectedTemplate === 'minimal') {
+        html = renderMinimal(parsed)
+      } else {
+        // Default to classic
+        html = renderClassic(parsed)
+      }
+
+      previewContainer.innerHTML = html
+    } catch (error) {
+      // If parsing fails, show error message
+      previewContainer.innerHTML = `<p style="color: #d32f2f;">Error rendering preview: ${escapeHtml(error.message)}</p>`
+    }
   }
 }
 
