@@ -17,6 +17,7 @@ function initializeApp() {
   const editorInput = document.getElementById('markdown-input')
   const previewContainer = document.getElementById('preview')
   const templateButtons = document.querySelectorAll('.template-btn')
+  const exampleBtns = document.querySelectorAll('.example-btn')
 
   // State for selected template
   let selectedTemplate = localStorage.getItem('selected-template') || 'classic'
@@ -31,6 +32,19 @@ function initializeApp() {
 
   // Initial preview render
   updatePreview()
+
+  // Wire up example loader buttons
+  exampleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const exampleKey = btn.dataset.example
+      editorInput.value = examples[exampleKey]
+      localStorage.setItem('resume-content', editorInput.value)
+      updatePreview()
+      // Update active state
+      exampleBtns.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+    })
+  })
 
   // Set up live preview and localStorage persistence on input
   editorInput.addEventListener('input', () => {

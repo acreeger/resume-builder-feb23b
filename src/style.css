@@ -104,7 +104,24 @@ p {
   gap: 0.5rem;
 }
 
-.template-btn {
+.example-loader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.example-loader span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.template-btn,
+.example-btn {
   padding: 0.5rem 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -116,12 +133,14 @@ p {
   transition: all 0.2s ease;
 }
 
-.template-btn:hover {
+.template-btn:hover,
+.example-btn:hover {
   border-color: #4a90e2;
   color: #4a90e2;
 }
 
-.template-btn.active {
+.template-btn.active,
+.example-btn.active {
   background-color: #4a90e2;
   color: white;
   border-color: #4a90e2;
@@ -216,6 +235,11 @@ p {
   #markdown-input {
     padding: 1.25rem;
     font-size: 1rem;
+  }
+
+
+  .example-loader {
+    flex-wrap: wrap;
   }
 
   .resume-name {
