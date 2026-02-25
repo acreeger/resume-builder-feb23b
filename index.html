@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="editor-area">
+          <h1>Resume Editor</h1>
+          <div class="example-loader">
+            <span>Load example:</span>
+            <button class="example-btn active" data-example="engineer">Engineer</button>
+            <button class="example-btn" data-example="designer">Designer</button>
+            <button class="example-btn" data-example="productManager">PM</button>
+          </div>
+          <textarea id="markdown-input" placeholder="Enter your resume in Markdown format..."></textarea>
+        </div>
+        <div class="preview-area">
+          <div class="preview-header">
+            <h1>Preview</h1>
+            <div class="template-switcher">
+              <button class="template-btn active" data-template="classic">Classic</button>
+              <button class="template-btn" data-template="modern">Modern</button>
+              <button class="template-btn" data-template="minimal">Minimal</button>
+            </div>
+          </div>
+          <div id="preview"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
