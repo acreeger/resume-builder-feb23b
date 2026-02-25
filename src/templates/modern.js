@@ -1,16 +1,11 @@
 /**
  * Modern Resume Template
  * Contemporary two-column layout with accent colors and clean typography
- *
  * @param {Object} resumeObject - The resume data object
- * @param {Object} [colors] - Color palette object
- * @param {string} [colors.primary] - Primary color
- * @param {string} [colors.accent] - Accent color
- * @param {string} [colors.text] - Text color
- * @param {string} [colors.background] - Background color
+ * @param {Object} [colors] - Optional color palette with primary, secondary, accent, text, background
  */
 
-export function renderModern(resumeObject, colorScheme) {
+export function renderModern(resumeObject, colors) {
   const {
     name = '',
     contact = {},
@@ -19,18 +14,14 @@ export function renderModern(resumeObject, colorScheme) {
     sections = {}
   } = resumeObject;
 
-  // Default color scheme
-  const defaultColors = {
-    primary: '#2563eb',
-    secondary: '#7f8c8d',
-    accent: '#2563eb',
-    text: '#2c3e50',
-    background: '#f8f9fa'
-  };
-
   // Use provided colors or fall back to defaults
-  const colors = colorScheme || defaultColors;
-
+  const colorScheme = colors || {
+    primary: '#1e3a8a',
+    secondary: '#3b82f6',
+    accent: '#60a5fa',
+    text: '#1f2937',
+    background: '#f9fafb'
+  };
   const skillsText = Array.isArray(skills)
     ? skills.map(skill =>
         typeof skill === 'string' ? skill : skill.name || ''
@@ -52,8 +43,9 @@ export function renderModern(resumeObject, colorScheme) {
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      color: ${colors.text};
+      color: ${colorScheme.text};
       line-height: 1.6;
+      background: ${colorScheme.background};
     }
 
     .resume-container {
@@ -65,9 +57,9 @@ export function renderModern(resumeObject, colorScheme) {
     }
 
     .sidebar {
-      background: ${colors.background};
+      background: ${colorScheme.background};
       padding: 40px 30px;
-      border-right: 3px solid ${colors.primary};
+      border-right: 3px solid ${colorScheme.primary};
     }
 
     .main-content {
@@ -101,13 +93,13 @@ export function renderModern(resumeObject, colorScheme) {
     .section-label {
       font-size: 11px;
       font-weight: 700;
-      color: ${colors.primary};
+      color: ${colorScheme.secondary};
       text-transform: uppercase;
       letter-spacing: 1.2px;
       margin-top: 25px;
       margin-bottom: 12px;
       padding-bottom: 8px;
-      border-bottom: 2px solid ${colors.primary};
+      border-bottom: 2px solid ${colorScheme.secondary};
     }
 
     .sidebar-section {
@@ -148,7 +140,7 @@ export function renderModern(resumeObject, colorScheme) {
       letter-spacing: 0.5px;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid ${colors.primary};
+      border-bottom: 2px solid ${colorScheme.primary};
     }
 
     .entry {
@@ -270,7 +262,7 @@ export function renderModern(resumeObject, colorScheme) {
       .sidebar {
         padding: 30px 25px;
         border-right: none;
-        border-bottom: 3px solid ${colors.primary};
+        border-bottom: 3px solid ${colorScheme.primary};
       }
 
       .main-content {

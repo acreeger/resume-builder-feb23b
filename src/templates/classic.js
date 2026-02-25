@@ -12,32 +12,19 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
- * @param {Object} [colorScheme] - Optional color scheme object
- * @param {string} [colorScheme.primary] - Used for section titles and borders
- * @param {string} [colorScheme.secondary] - Used for subtitles and metadata
- * @param {string} [colorScheme.accent] - Used for highlights
- * @param {string} [colorScheme.text] - Used for body text
- * @param {string} [colorScheme.background] - Used for page background
+ * @param {Object} [colors] - Optional color palette with primary, secondary, accent, text, background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderClassic(resumeObject = {}, colorScheme = {}) {
+export function renderClassic(resumeObject, colors) {
   const { name = '', contact = {}, sections = {} } = resumeObject;
 
-  // Default color scheme for backward compatibility
-  const colors = {
-    primary: colorScheme?.primary ?? '#000',
-    secondary: colorScheme?.secondary ?? '#333',
-    accent: colorScheme?.accent ?? '#000',
-    text: colorScheme?.text ?? '#000',
-    background: colorScheme?.background ?? '#fff'
-  };
-
-  // Use provided colors or fallback to defaults
+  // Use provided colors or fall back to defaults
   const colorScheme = colors || {
-    primary: '#1976d2',
-    accent: '#0d47a1',
-    text: '#212121',
-    background: '#ffffff'
+    primary: '#1e3a8a',
+    secondary: '#3b82f6',
+    accent: '#60a5fa',
+    text: '#1f2937',
+    background: '#f9fafb'
   };
 
   // Build contact info line
@@ -108,8 +95,8 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
     body {
       font-family: Georgia, 'Times New Roman', Times, serif;
       line-height: 1.6;
-      color: ${colors.text};
-      background-color: ${colors.background};
+      color: ${colorScheme.text};
+      background-color: ${colorScheme.background};
       padding: 0;
     }
 
@@ -126,7 +113,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       text-align: center;
       margin-bottom: 0.3in;
       padding-bottom: 0.15in;
-      border-bottom: 2px solid ${colors.primary};
+      border-bottom: 2px solid ${colorScheme.primary};
     }
 
     .resume-name {
@@ -139,7 +126,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
 
     .resume-contact {
       font-size: 10pt;
-      color: ${colors.text};
+      color: ${colorScheme.text};
     }
 
     .resume-content {
@@ -157,10 +144,9 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       text-transform: uppercase;
       margin-bottom: 0.1in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid ${colors.primary};
-      color: ${colors.primary};
-      letter-spacing: 1pt;
+      border-bottom: 1px solid ${colorScheme.primary};
       color: ${colorScheme.primary};
+      letter-spacing: 1pt;
     }
 
     .section-content {
@@ -176,7 +162,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       font-weight: bold;
       font-size: 11pt;
       margin-bottom: 2pt;
-      color: ${colors.accent};
+      color: ${colorScheme.accent};
     }
 
     .item-meta {
@@ -189,21 +175,21 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
 
     .item-subtitle {
       font-style: italic;
-      color: ${colors.secondary};
+      color: ${colorScheme.secondary};
     }
 
     .item-date {
       text-align: right;
       white-space: nowrap;
       margin-left: 10pt;
-      color: ${colors.secondary};
+      color: ${colorScheme.secondary};
     }
 
     .item-description {
       font-size: 10pt;
       line-height: 1.4;
       margin-left: 0;
-      color: ${colors.text};
+      color: ${colorScheme.text};
     }
 
     /* Print styles */
@@ -211,7 +197,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       body {
         margin: 0;
         padding: 0;
-        background-color: ${colors.background};
+        background-color: ${colorScheme.background};
       }
 
       .resume-container {

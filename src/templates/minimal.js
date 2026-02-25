@@ -12,26 +12,20 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
- * @param {Object} [colorScheme] - Optional color scheme object
- * @param {string} [colorScheme.primary] - Primary color (reserved for future use)
- * @param {string} [colorScheme.secondary] - Secondary color (dividers, subtle text)
- * @param {string} [colorScheme.accent] - Accent color (reserved for future use)
- * @param {string} [colorScheme.text] - Text color for body content
- * @param {string} [colorScheme.background] - Background color for page
+ * @param {Object} [colors] - Optional color palette with primary, secondary, accent, text, background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderMinimal(resumeObject, colorScheme) {
+export function renderMinimal(resumeObject, colors) {
   const { name, contact, sections } = resumeObject;
 
-  // Apply color scheme with defaults
-  const defaultColors = {
-    text: '#000',
-    background: '#fff',
-    secondary: '#e0e0e0',
-    primary: '#0066cc',
-    accent: '#ff6600'
+  // Use provided colors or fall back to defaults
+  const colorScheme = colors || {
+    primary: '#1e3a8a',
+    secondary: '#3b82f6',
+    accent: '#60a5fa',
+    text: '#1f2937',
+    background: '#f9fafb'
   };
-  const colors = { ...defaultColors, ...sanitizeColors(colorScheme) };
 
   // Build contact info line
   const contactItems = [];
@@ -101,8 +95,8 @@ export function renderMinimal(resumeObject, colorScheme) {
     body {
       font-family: system-ui, -apple-system, sans-serif;
       line-height: 1.7;
-      color: ${colors.text};
-      background-color: ${colors.background};
+      color: ${colorScheme.text};
+      background-color: ${colorScheme.background};
       padding: 0;
     }
 
@@ -130,7 +124,7 @@ export function renderMinimal(resumeObject, colorScheme) {
 
     .resume-contact {
       font-size: 9pt;
-      color: ${colors.text};
+      color: ${colorScheme.text};
       line-height: 1.5;
     }
 
@@ -149,7 +143,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       text-transform: uppercase;
       margin-bottom: 0.15in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid ${colors.secondary};
+      border-bottom: 1px solid ${colorScheme.secondary};
       letter-spacing: 0.5pt;
       color: ${colorScheme.primary};
     }
@@ -176,12 +170,12 @@ export function renderMinimal(resumeObject, colorScheme) {
       align-items: baseline;
       font-size: 9pt;
       margin-bottom: 4pt;
-      color: ${colors.secondary};
+      color: ${colorScheme.secondary};
     }
 
     .item-subtitle {
       font-weight: 400;
-      color: ${colors.secondary};
+      color: ${colorScheme.secondary};
     }
 
     .item-date {
@@ -195,7 +189,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       font-size: 9pt;
       line-height: 1.5;
       margin-left: 0;
-      color: ${colors.text};
+      color: ${colorScheme.text};
     }
 
     /* Print styles */
@@ -203,7 +197,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       body {
         margin: 0;
         padding: 0;
-        background-color: ${colors.background};
+        background-color: ${colorScheme.background};
       }
 
       .resume-container {
@@ -253,33 +247,6 @@ export function renderMinimal(resumeObject, colorScheme) {
   </div>
 </body>
 </html>`;
-}
-
-/**
- * Sanitize color values to prevent CSS injection
- * @param {Object} colorScheme - Color scheme object to sanitize
- * @returns {Object} Sanitized color scheme with only valid colors
- */
-function sanitizeColors(colorScheme) {
-  if (!colorScheme || typeof colorScheme !== 'object') {
-    return {};
-  }
-
-  const colorRegex = /^(#([0-9a-fA-F]{3}){1,2}|rgb(a)?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(\s*,\s*[\d.]+)?\s*\)|hsl(a)?\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%(\s*,\s*[\d.]+)?\s*\)|(aqua|black|blue|fuchsia|gray|grey|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow|inherit|currentColor))$/i;
-
-  const validColorKeys = ['primary', 'secondary', 'accent', 'text', 'background'];
-  const sanitized = {};
-
-  for (const key of validColorKeys) {
-    if (key in colorScheme) {
-      const value = String(colorScheme[key]).trim();
-      if (colorRegex.test(value)) {
-        sanitized[key] = value;
-      }
-    }
-  }
-
-  return sanitized;
 }
 
 /**

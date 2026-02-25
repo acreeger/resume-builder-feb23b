@@ -219,8 +219,7 @@ function initializeApp() {
   if (randomizeBtn) {
     randomizeBtn.addEventListener('click', () => {
       const palette = getRandomColorPalette()
-      // Emit callback for parent component to handle color application
-      handleColorsRandomized(palette)
+      setColors(palette)
       // Add visual feedback
       randomizeBtn.classList.add('active')
       setTimeout(() => {
@@ -238,40 +237,6 @@ function initializeApp() {
     })
   }
 
-  function updatePreview() {
-    const markdownText = editorInput.value
-
-    try {
-      const parsed = resumeFromMarkdown(markdownText)
-
-      // Select the appropriate render function based on selected template
-      let html = ''
-      if (selectedTemplate === 'modern') {
-        html = renderModern(parsed)
-      } else if (selectedTemplate === 'minimal') {
-        html = renderMinimal(parsed)
-      } else {
-        // Default to classic
-        html = renderClassic(parsed)
-      }
-
-      previewContainer.innerHTML = html
-    } catch (error) {
-      // If parsing fails, show error message
-      previewContainer.innerHTML = `<p style="color: #d32f2f;">Error rendering preview: ${escapeHtml(error.message)}</p>`
-    }
-  }
-
-  /**
-   * Handles the randomize colors callback
-   * @param {Object} palette - The color palette object with primary, secondary, accent, text, background
-   */
-  function handleColorsRandomized(palette) {
-    // Store the selected palette in localStorage for persistence
-    localStorage.setItem('selected-palette', JSON.stringify(palette))
-    // Trigger preview update to reflect color changes
-    updatePreview()
-  }
 }
 
 // Start the app when DOM is ready

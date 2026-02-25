@@ -1,73 +1,70 @@
 /**
- * @typedef {Object} ColorPalette
- * @property {string} primary - Primary color in hex format (#RRGGBB)
- * @property {string} secondary - Secondary color in hex format (#RRGGBB)
- * @property {string} accent - Accent color in hex format (#RRGGBB)
- * @property {string} text - Text color in hex format (#RRGGBB)
- * @property {string} background - Background color in hex format (#RRGGBB)
+ * Color Palette System for Resume Builder
+ *
+ * Provides a centralized system for managing color palettes and randomization.
+ * Color palettes consist of five key colors that work together for a cohesive design.
  */
 
 /**
- * Array of professional color palettes for resume templates
- * @type {ColorPalette[]}
+ * Predefined color palettes with good contrast and design coherence.
+ * Each palette is carefully chosen to ensure readability and visual harmony.
  */
 const COLOR_PALETTES = [
   {
-    name: 'Classic Blue',
-    primary: '#1e3a8a',
-    secondary: '#3b82f6',
-    accent: '#60a5fa',
-    text: '#1f2937',
-    background: '#f9fafb'
+    primary: "#0066CC",
+    secondary: "#00A8E8",
+    accent: "#FF6B35",
+    text: "#2C3E50",
+    background: "#F8FAFB",
   },
   {
-    name: 'Modern Teal',
-    primary: '#0d9488',
-    secondary: '#14b8a6',
-    accent: '#2dd4bf',
-    text: '#0f172a',
-    background: '#f0fdfa'
+    primary: "#2D6A4F",
+    secondary: "#40916C",
+    accent: "#D62828",
+    text: "#1B3A3A",
+    background: "#F7F9F8",
   },
   {
-    name: 'Professional Purple',
-    primary: '#6d28d9',
-    secondary: '#7c3aed',
-    accent: '#a78bfa',
-    text: '#1f1f2e',
-    background: '#faf5ff'
+    primary: "#D84315",
+    secondary: "#FF9100",
+    accent: "#6A1B9A",
+    text: "#3E2723",
+    background: "#FDF9F6",
   },
   {
-    name: 'Elegant Slate',
-    primary: '#334155',
-    secondary: '#475569',
-    accent: '#64748b',
-    text: '#0f172a',
-    background: '#f8fafc'
+    primary: "#6A1B9A",
+    secondary: "#9C27B0",
+    accent: "#00BCD4",
+    text: "#3F2C70",
+    background: "#F8F6FB",
   },
   {
-    name: 'Bold Crimson',
-    primary: '#991b1b',
-    secondary: '#dc2626',
-    accent: '#f87171',
-    text: '#1f2937',
-    background: '#fef2f2'
+    primary: "#00695C",
+    secondary: "#009688",
+    accent: "#E91E63",
+    text: "#263238",
+    background: "#F7F9F8",
   },
   {
-    name: 'Executive Green',
-    primary: '#15803d',
-    secondary: '#22c55e',
-    accent: '#86efac',
-    text: '#1a1a1a',
-    background: '#f0fdf4'
-  }
+    primary: "#263238",
+    secondary: "#455A64",
+    accent: "#FF5722",
+    text: "#1B1D1F",
+    background: "#FAFBFC",
+  },
 ];
 
 /**
- * Returns a random color palette from the available palettes
- * @returns {ColorPalette} A randomly selected color palette
+ * Gets a random color palette from the predefined set.
+ *
+ * Uses Math.random() for randomization. Returns a different palette
+ * each time it's called (statistically speaking).
+ *
+ * @returns A random color palette object with primary, secondary, accent, text, and background properties
+ *
  * @example
  * const palette = getRandomColorPalette();
- * console.log(palette.primary); // '#1e3a8a' or another palette's primary
+ * console.log(palette.primary); // e.g., "#0066CC"
  */
 export function getRandomColorPalette() {
   const randomIndex = Math.floor(Math.random() * COLOR_PALETTES.length);
@@ -75,24 +72,35 @@ export function getRandomColorPalette() {
 }
 
 /**
- * Returns all available color palettes
- * @returns {ColorPalette[]} Array of all color palette objects
+ * Gets a color palette by its index in the predefined set.
+ *
+ * Useful for deterministic palette selection, e.g., based on user preferences
+ * or template selection. If the index is out of bounds, wraps around using modulo.
+ *
+ * @param {number} index - The index of the palette to retrieve (0-based)
+ * @returns The color palette at the specified index
+ *
  * @example
- * const palettes = getAllColorPalettes();
- * console.log(palettes.length); // 6
+ * const palette = getColorPaletteByIndex(0); // Gets first palette
+ * const palette2 = getColorPaletteByIndex(10); // Wraps around if index > length
  */
-export function getAllColorPalettes() {
-  return COLOR_PALETTES;
+export function getColorPaletteByIndex(index) {
+  const normalizedIndex = Math.abs(index) % COLOR_PALETTES.length;
+  return COLOR_PALETTES[normalizedIndex];
 }
 
 /**
- * Returns a specific color palette by index
- * @param {number} index - The index of the palette (0-5)
- * @returns {ColorPalette|undefined} The palette at the specified index, or undefined if index is out of bounds
+ * Returns all available color palettes.
+ *
+ * Useful for displaying palette options to users or iterating through
+ * all available palettes.
+ *
+ * @returns Array of all color palette objects
+ *
  * @example
- * const palette = getColorPaletteByIndex(0);
- * console.log(palette.name); // 'Classic Blue'
+ * const palettes = getAllColorPalettes();
+ * console.log(`Available palettes: ${palettes.length}`);
  */
-export function getColorPaletteByIndex(index) {
-  return COLOR_PALETTES[index];
+export function getAllColorPalettes() {
+  return COLOR_PALETTES.map((palette) => ({ ...palette }));
 }
