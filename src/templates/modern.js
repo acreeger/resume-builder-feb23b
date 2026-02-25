@@ -3,7 +3,7 @@
  * Contemporary two-column layout with accent colors and clean typography
  */
 
-export function renderModern(resumeObject) {
+export function renderModern(resumeObject, colorScheme) {
   const {
     name = '',
     email = '',
@@ -14,6 +14,18 @@ export function renderModern(resumeObject) {
     education = [],
     skills = []
   } = resumeObject;
+
+  // Default color scheme
+  const defaultColors = {
+    primary: '#2563eb',
+    secondary: '#7f8c8d',
+    accent: '#2563eb',
+    text: '#2c3e50',
+    background: '#f8f9fa'
+  };
+
+  // Use provided colors or fall back to defaults
+  const colors = colorScheme || defaultColors;
 
   const skillsText = Array.isArray(skills)
     ? skills.map(skill =>
@@ -36,7 +48,7 @@ export function renderModern(resumeObject) {
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      color: #2c3e50;
+      color: ${colors.text};
       line-height: 1.6;
     }
 
@@ -49,9 +61,9 @@ export function renderModern(resumeObject) {
     }
 
     .sidebar {
-      background: #f8f9fa;
+      background: ${colors.background};
       padding: 40px 30px;
-      border-right: 3px solid #2563eb;
+      border-right: 3px solid ${colors.primary};
     }
 
     .main-content {
@@ -85,13 +97,13 @@ export function renderModern(resumeObject) {
     .section-label {
       font-size: 11px;
       font-weight: 700;
-      color: #2563eb;
+      color: ${colors.primary};
       text-transform: uppercase;
       letter-spacing: 1.2px;
       margin-top: 25px;
       margin-bottom: 12px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #2563eb;
+      border-bottom: 2px solid ${colors.primary};
     }
 
     .sidebar-section {
@@ -132,7 +144,7 @@ export function renderModern(resumeObject) {
       letter-spacing: 0.5px;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #2563eb;
+      border-bottom: 2px solid ${colors.primary};
     }
 
     .entry {
@@ -232,7 +244,7 @@ export function renderModern(resumeObject) {
 
       .sidebar {
         padding: 40px 30px;
-        border-right: 3px solid #2563eb;
+        border-right: 3px solid ${colors.primary};
       }
 
       .main-content {
@@ -254,7 +266,7 @@ export function renderModern(resumeObject) {
       .sidebar {
         padding: 30px 25px;
         border-right: none;
-        border-bottom: 3px solid #2563eb;
+        border-bottom: 3px solid ${colors.primary};
       }
 
       .main-content {
