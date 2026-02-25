@@ -32,6 +32,14 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
     background: colorScheme?.background ?? '#fff'
   };
 
+  // Use provided colors or fallback to defaults
+  const colorScheme = colors || {
+    primary: '#1976d2',
+    accent: '#0d47a1',
+    text: '#212121',
+    background: '#ffffff'
+  };
+
   // Build contact info line
   const contactItems = [];
   if (contact.email) contactItems.push(contact.email);
@@ -110,7 +118,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       height: 11in;
       margin: 0 auto;
       padding: 0.5in;
-      background-color: white;
+      background-color: ${colorScheme.background};
       font-size: 11pt;
     }
 
@@ -126,6 +134,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       font-weight: bold;
       margin-bottom: 6pt;
       letter-spacing: 0.5pt;
+      color: ${colorScheme.primary};
     }
 
     .resume-contact {
@@ -151,6 +160,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       border-bottom: 1px solid ${colors.primary};
       color: ${colors.primary};
       letter-spacing: 1pt;
+      color: ${colorScheme.primary};
     }
 
     .section-content {

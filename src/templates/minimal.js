@@ -111,7 +111,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       height: 11in;
       margin: 0 auto;
       padding: 0.75in;
-      background-color: white;
+      background-color: ${colorScheme.background};
       font-size: 10pt;
     }
 
@@ -125,6 +125,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       font-weight: 500;
       margin-bottom: 8pt;
       letter-spacing: 0;
+      color: ${colorScheme.primary};
     }
 
     .resume-contact {
@@ -150,6 +151,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       padding-bottom: 0.08in;
       border-bottom: 1px solid ${colors.secondary};
       letter-spacing: 0.5pt;
+      color: ${colorScheme.primary};
     }
 
     .section-content {
@@ -165,6 +167,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       font-weight: 500;
       font-size: 10pt;
       margin-bottom: 2pt;
+      color: ${colorScheme.primary};
     }
 
     .item-meta {
@@ -185,6 +188,7 @@ export function renderMinimal(resumeObject, colorScheme) {
       text-align: right;
       white-space: nowrap;
       margin-left: 10pt;
+      color: ${colorScheme.text};
     }
 
     .item-description {

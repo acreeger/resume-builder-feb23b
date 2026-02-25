@@ -1,18 +1,22 @@
 /**
  * Modern Resume Template
  * Contemporary two-column layout with accent colors and clean typography
+ *
+ * @param {Object} resumeObject - The resume data object
+ * @param {Object} [colors] - Color palette object
+ * @param {string} [colors.primary] - Primary color
+ * @param {string} [colors.accent] - Accent color
+ * @param {string} [colors.text] - Text color
+ * @param {string} [colors.background] - Background color
  */
 
 export function renderModern(resumeObject, colorScheme) {
   const {
     name = '',
-    email = '',
-    phone = '',
-    location = '',
+    contact = {},
     summary = '',
-    experience = [],
-    education = [],
-    skills = []
+    skills = [],
+    sections = {}
   } = resumeObject;
 
   // Default color scheme
@@ -78,14 +82,14 @@ export function renderModern(resumeObject, colorScheme) {
     .name {
       font-size: 28px;
       font-weight: 700;
-      color: #1a202c;
+      color: ${colorScheme.primary};
       margin-bottom: 8px;
       letter-spacing: -0.5px;
     }
 
     .contact-info {
       font-size: 12px;
-      color: #7f8c8d;
+      color: ${colorScheme.text};
       line-height: 1.8;
       word-break: break-word;
     }
@@ -112,14 +116,14 @@ export function renderModern(resumeObject, colorScheme) {
 
     .sidebar-item {
       font-size: 12px;
-      color: #555;
+      color: ${colorScheme.text};
       margin-bottom: 8px;
       line-height: 1.5;
     }
 
     .sidebar-item-label {
       font-weight: 600;
-      color: #1a202c;
+      color: ${colorScheme.primary};
       font-size: 11px;
       margin-top: 10px;
       margin-bottom: 4px;
@@ -128,7 +132,7 @@ export function renderModern(resumeObject, colorScheme) {
     .summary {
       margin-bottom: 30px;
       font-size: 13px;
-      color: #555;
+      color: ${colorScheme.text};
       line-height: 1.7;
     }
 
@@ -139,7 +143,7 @@ export function renderModern(resumeObject, colorScheme) {
     .section-title {
       font-size: 14px;
       font-weight: 700;
-      color: #1a202c;
+      color: ${colorScheme.primary};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 15px;
@@ -168,24 +172,24 @@ export function renderModern(resumeObject, colorScheme) {
     .entry-title {
       font-size: 13px;
       font-weight: 600;
-      color: #1a202c;
+      color: ${colorScheme.primary};
     }
 
     .entry-subtitle {
       font-size: 12px;
-      color: #7f8c8d;
+      color: ${colorScheme.text};
       font-weight: 500;
     }
 
     .entry-date {
       font-size: 11px;
-      color: #95a5a6;
+      color: ${colorScheme.accent};
       white-space: nowrap;
     }
 
     .entry-description {
       font-size: 12px;
-      color: #555;
+      color: ${colorScheme.text};
       line-height: 1.5;
       margin-top: 5px;
     }
@@ -201,19 +205,19 @@ export function renderModern(resumeObject, colorScheme) {
     .degree {
       font-size: 12px;
       font-weight: 600;
-      color: #1a202c;
+      color: ${colorScheme.primary};
       margin-bottom: 2px;
     }
 
     .school {
       font-size: 11px;
-      color: #7f8c8d;
+      color: ${colorScheme.text};
       margin-bottom: 2px;
     }
 
     .graduation {
       font-size: 11px;
-      color: #95a5a6;
+      color: ${colorScheme.accent};
     }
 
     .skills-grid {
@@ -224,7 +228,7 @@ export function renderModern(resumeObject, colorScheme) {
 
     .skills-list {
       font-size: 12px;
-      color: #555;
+      color: ${colorScheme.text};
       line-height: 1.6;
     }
 
@@ -334,23 +338,19 @@ export function renderModern(resumeObject, colorScheme) {
       <div class="section">
         <div class="section-title">Experience</div>
         ${experience.map(job => {
-          const title = job.title || job.position || '';
-          const company = job.company || job.employer || '';
-          const startDate = job.startDate || job.start || '';
-          const endDate = job.endDate || job.end || '';
-          const location = job.location || '';
-          const description = job.description || job.summary || '';
-
-          const dateRange = [startDate, endDate].filter(Boolean).join(' - ') || '';
+          const title = job.title || '';
+          const subtitle = job.subtitle || '';
+          const date = job.date || '';
+          const description = job.description || '';
 
           return `
           <div class="entry">
             <div class="entry-header">
               <div>
                 <div class="entry-title">${escapeHtml(title)}</div>
-                <div class="entry-subtitle">${escapeHtml(company)}${location ? ' • ' + escapeHtml(location) : ''}</div>
+                ${subtitle ? `<div class="entry-subtitle">${escapeHtml(subtitle)}</div>` : ''}
               </div>
-              ${dateRange ? `<div class="entry-date">${escapeHtml(dateRange)}</div>` : ''}
+              ${date ? `<div class="entry-date">${escapeHtml(date)}</div>` : ''}
             </div>
             ${description ? `<div class="entry-description">${escapeHtml(description)}</div>` : ''}
           </div>
@@ -363,15 +363,15 @@ export function renderModern(resumeObject, colorScheme) {
       <div class="section">
         <div class="section-title">Education</div>
         ${education.map(edu => {
-          const degree = edu.degree || edu.name || '';
-          const school = edu.school || edu.institution || '';
-          const graduation = edu.graduationDate || edu.date || '';
+          const title = edu.title || '';
+          const subtitle = edu.subtitle || '';
+          const date = edu.date || '';
 
           return `
           <div class="education-entry">
-            <div class="degree">${escapeHtml(degree)}</div>
-            ${school ? `<div class="school">${escapeHtml(school)}</div>` : ''}
-            ${graduation ? `<div class="graduation">${escapeHtml(graduation)}</div>` : ''}
+            ${title ? `<div class="degree">${escapeHtml(title)}</div>` : ''}
+            ${subtitle ? `<div class="school">${escapeHtml(subtitle)}</div>` : ''}
+            ${date ? `<div class="graduation">${escapeHtml(date)}</div>` : ''}
           </div>
           `;
         }).join('')}
