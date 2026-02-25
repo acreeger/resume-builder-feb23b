@@ -147,6 +147,32 @@ p {
   font-weight: 600;
 }
 
+.randomize-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.randomize-btn:hover {
+  border-color: #22c55e;
+  color: #22c55e;
+  background-color: #f0fdf4;
+}
+
+.randomize-btn.active {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
+  transform: scale(1.05);
+}
+
 #preview {
   flex: 1;
   overflow-y: auto;
