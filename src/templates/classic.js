@@ -12,10 +12,25 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
+ * @param {Object} [colorScheme] - Optional color scheme object
+ * @param {string} [colorScheme.primary] - Used for section titles and borders
+ * @param {string} [colorScheme.secondary] - Used for subtitles and metadata
+ * @param {string} [colorScheme.accent] - Used for highlights
+ * @param {string} [colorScheme.text] - Used for body text
+ * @param {string} [colorScheme.background] - Used for page background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderClassic(resumeObject) {
-  const { name, contact, sections } = resumeObject;
+export function renderClassic(resumeObject = {}, colorScheme = {}) {
+  const { name = '', contact = {}, sections = {} } = resumeObject;
+
+  // Default color scheme for backward compatibility
+  const colors = {
+    primary: colorScheme?.primary ?? '#000',
+    secondary: colorScheme?.secondary ?? '#333',
+    accent: colorScheme?.accent ?? '#000',
+    text: colorScheme?.text ?? '#000',
+    background: colorScheme?.background ?? '#fff'
+  };
 
   // Build contact info line
   const contactItems = [];
@@ -85,8 +100,8 @@ export function renderClassic(resumeObject) {
     body {
       font-family: Georgia, 'Times New Roman', Times, serif;
       line-height: 1.6;
-      color: #000;
-      background-color: #fff;
+      color: ${colors.text};
+      background-color: ${colors.background};
       padding: 0;
     }
 
@@ -103,7 +118,7 @@ export function renderClassic(resumeObject) {
       text-align: center;
       margin-bottom: 0.3in;
       padding-bottom: 0.15in;
-      border-bottom: 2px solid #000;
+      border-bottom: 2px solid ${colors.primary};
     }
 
     .resume-name {
@@ -115,7 +130,7 @@ export function renderClassic(resumeObject) {
 
     .resume-contact {
       font-size: 10pt;
-      color: #000;
+      color: ${colors.text};
     }
 
     .resume-content {
@@ -133,7 +148,8 @@ export function renderClassic(resumeObject) {
       text-transform: uppercase;
       margin-bottom: 0.1in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid #000;
+      border-bottom: 1px solid ${colors.primary};
+      color: ${colors.primary};
       letter-spacing: 1pt;
     }
 
@@ -150,6 +166,7 @@ export function renderClassic(resumeObject) {
       font-weight: bold;
       font-size: 11pt;
       margin-bottom: 2pt;
+      color: ${colors.accent};
     }
 
     .item-meta {
@@ -162,20 +179,21 @@ export function renderClassic(resumeObject) {
 
     .item-subtitle {
       font-style: italic;
-      color: #333;
+      color: ${colors.secondary};
     }
 
     .item-date {
       text-align: right;
       white-space: nowrap;
       margin-left: 10pt;
+      color: ${colors.secondary};
     }
 
     .item-description {
       font-size: 10pt;
       line-height: 1.4;
       margin-left: 0;
-      color: #000;
+      color: ${colors.text};
     }
 
     /* Print styles */
@@ -183,7 +201,7 @@ export function renderClassic(resumeObject) {
       body {
         margin: 0;
         padding: 0;
-        background-color: white;
+        background-color: ${colors.background};
       }
 
       .resume-container {
