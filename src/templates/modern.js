@@ -1,9 +1,13 @@
 /**
  * Modern Resume Template
  * Contemporary two-column layout with accent colors and clean typography
+ *
+ * @param {Object} resumeObject - The resume data object
+ * @param {Object} [colorPalette] - The color palette object with primary, secondary, accent, text, background
+ * @returns {string} Complete HTML string for the resume
  */
 
-export function renderModern(resumeObject) {
+export function renderModern(resumeObject, colorPalette = {}) {
   const {
     name = '',
     email = '',
@@ -14,6 +18,15 @@ export function renderModern(resumeObject) {
     education = [],
     skills = []
   } = resumeObject;
+
+  // Use provided colors or defaults
+  const colors = {
+    primary: colorPalette.primary || '#2563eb',
+    secondary: colorPalette.secondary || '#3b82f6',
+    accent: colorPalette.accent || '#60a5fa',
+    text: colorPalette.text || '#2c3e50',
+    background: colorPalette.background || '#f8f9fa'
+  };
 
   const skillsText = Array.isArray(skills)
     ? skills.map(skill =>
@@ -36,7 +49,7 @@ export function renderModern(resumeObject) {
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      color: #2c3e50;
+      color: ${colors.text};
       line-height: 1.6;
     }
 
@@ -49,9 +62,9 @@ export function renderModern(resumeObject) {
     }
 
     .sidebar {
-      background: #f8f9fa;
+      background: ${colors.background};
       padding: 40px 30px;
-      border-right: 3px solid #2563eb;
+      border-right: 3px solid ${colors.primary};
     }
 
     .main-content {
@@ -85,13 +98,13 @@ export function renderModern(resumeObject) {
     .section-label {
       font-size: 11px;
       font-weight: 700;
-      color: #2563eb;
+      color: ${colors.primary};
       text-transform: uppercase;
       letter-spacing: 1.2px;
       margin-top: 25px;
       margin-bottom: 12px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #2563eb;
+      border-bottom: 2px solid ${colors.secondary};
     }
 
     .sidebar-section {
@@ -127,12 +140,12 @@ export function renderModern(resumeObject) {
     .section-title {
       font-size: 14px;
       font-weight: 700;
-      color: #1a202c;
+      color: ${colors.primary};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #2563eb;
+      border-bottom: 2px solid ${colors.secondary};
     }
 
     .entry {
@@ -156,12 +169,12 @@ export function renderModern(resumeObject) {
     .entry-title {
       font-size: 13px;
       font-weight: 600;
-      color: #1a202c;
+      color: ${colors.primary};
     }
 
     .entry-subtitle {
       font-size: 12px;
-      color: #7f8c8d;
+      color: ${colors.secondary};
       font-weight: 500;
     }
 
@@ -173,7 +186,7 @@ export function renderModern(resumeObject) {
 
     .entry-description {
       font-size: 12px;
-      color: #555;
+      color: ${colors.text};
       line-height: 1.5;
       margin-top: 5px;
     }
@@ -189,13 +202,13 @@ export function renderModern(resumeObject) {
     .degree {
       font-size: 12px;
       font-weight: 600;
-      color: #1a202c;
+      color: ${colors.primary};
       margin-bottom: 2px;
     }
 
     .school {
       font-size: 11px;
-      color: #7f8c8d;
+      color: ${colors.secondary};
       margin-bottom: 2px;
     }
 
@@ -212,7 +225,7 @@ export function renderModern(resumeObject) {
 
     .skills-list {
       font-size: 12px;
-      color: #555;
+      color: ${colors.text};
       line-height: 1.6;
     }
 
@@ -232,7 +245,7 @@ export function renderModern(resumeObject) {
 
       .sidebar {
         padding: 40px 30px;
-        border-right: 3px solid #2563eb;
+        border-right: 3px solid ${colors.primary};
       }
 
       .main-content {
@@ -254,7 +267,7 @@ export function renderModern(resumeObject) {
       .sidebar {
         padding: 30px 25px;
         border-right: none;
-        border-bottom: 3px solid #2563eb;
+        border-bottom: 3px solid ${colors.primary};
       }
 
       .main-content {

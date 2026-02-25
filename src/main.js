@@ -4,6 +4,8 @@ import { resumeFromMarkdown } from './parser.js'
 import { renderClassic } from './templates/classic.js'
 import { renderModern } from './templates/modern.js'
 import { renderMinimal } from './templates/minimal.js'
+import { useColorPalette } from './colorState.js'
+import { getRandomColorPalette } from './utils/colorPalettes.js'
 
 // Helper function to escape HTML
 function escapeHtml(text) {
@@ -18,6 +20,8 @@ function initializeApp() {
   const previewContainer = document.getElementById('preview')
   const templateButtons = document.querySelectorAll('.template-btn')
   const exampleBtns = document.querySelectorAll('.example-btn')
+  const randomizeBtn = document.getElementById('randomize-colors-btn')
+  const colorPalette = useColorPalette()
 
   // State for selected template
   let selectedTemplate = localStorage.getItem('selected-template') || 'classic'
@@ -63,6 +67,20 @@ function initializeApp() {
     })
   })
 
+  // Set up randomize colors button
+  if (randomizeBtn) {
+    randomizeBtn.addEventListener('click', () => {
+      const palette = getRandomColorPalette()
+      colorPalette.setCurrent(palette)
+      updatePreview()
+      // Add visual feedback
+      randomizeBtn.classList.add('active')
+      setTimeout(() => {
+        randomizeBtn.classList.remove('active')
+      }, 600)
+    })
+  }
+
   function updateActiveTemplateButton() {
     templateButtons.forEach(button => {
       button.classList.remove('active')
@@ -77,16 +95,17 @@ function initializeApp() {
 
     try {
       const parsed = resumeFromMarkdown(markdownText)
+      const palette = colorPalette.current
 
       // Select the appropriate render function based on selected template
       let html = ''
       if (selectedTemplate === 'modern') {
-        html = renderModern(parsed)
+        html = renderModern(parsed, palette)
       } else if (selectedTemplate === 'minimal') {
-        html = renderMinimal(parsed)
+        html = renderMinimal(parsed, palette)
       } else {
         // Default to classic
-        html = renderClassic(parsed)
+        html = renderClassic(parsed, palette)
       }
 
       previewContainer.innerHTML = html
