@@ -5,6 +5,7 @@ import { resumeFromMarkdown } from './parser.js'
 import { renderClassic } from './templates/classic.js'
 import { renderModern } from './templates/modern.js'
 import { renderMinimal } from './templates/minimal.js'
+import { useColorPalette } from './colorState.js'
 import { getRandomColorPalette } from './utils/colorPalettes.js'
 
 // Debounce function to limit how often a function is called
@@ -16,159 +17,24 @@ function debounce(func, delay) {
   }
 }
 
-/**
- * Load colors from localStorage or use default palette
- * @returns {Object} The color palette object
- */
-function loadColors() {
-  try {
-    const savedColorsJson = localStorage.getItem('resume-colors')
-    if (savedColorsJson) {
-      const parsedColors = JSON.parse(savedColorsJson)
-      // Sanitize colors to strip any extraneous properties and prevent injection attacks
-      const sanitized = sanitizeColors(parsedColors)
-      if (sanitized) {
-        return sanitized
-      }
-    }
-  } catch (error) {
-    // Only catch JSON parsing errors; other localStorage errors are unexpected
-    if (error instanceof SyntaxError) {
-      console.warn('Failed to parse colors from localStorage:', error)
-    } else {
-      console.warn('Failed to load colors from localStorage:', error)
-    }
-  }
-
-  // Use first palette from getAllColorPalettes() as default
-  try {
-    const allPalettes = getAllColorPalettes()
-    const firstPaletteId = Object.keys(allPalettes)[0]
-    return allPalettes[firstPaletteId]
-  } catch (error) {
-    // If colorPalettes module is not available, use a basic fallback
-    console.warn('Failed to load color palettes:', error)
-    return {
-      id: 'default',
-      name: 'Default',
-      primary: '#1976d2',
-      accent: '#0d47a1',
-      text: '#212121',
-      background: '#ffffff'
-    }
-  }
-}
-
-// Color state management
-let selectedColors = loadColors()
-let selectedTemplate = 'classic'
-
-// DOM elements - selected at module scope to avoid repeated DOM queries
-let editorInput = null
-let previewContainer = null
-
-/**
- * Update preview with current markdown content and template
- */
-function updatePreview() {
-  if (!editorInput || !previewContainer) {
-    return
-  }
-
-  const markdownText = editorInput.value
-
-  try {
-    // Configure marked with GFM and breaks options
-    marked.setOptions({
-      breaks: true,
-      gfm: true
-    })
-
-    const parsed = resumeFromMarkdown(markdownText)
-
-    // Select the appropriate render function based on selected template
-    let html = ''
-    if (selectedTemplate === 'modern') {
-      html = renderModern(parsed, selectedColors)
-    } else if (selectedTemplate === 'minimal') {
-      html = renderMinimal(parsed, selectedColors)
-    } else {
-      // Default to classic
-      html = renderClassic(parsed, selectedColors)
-    }
-
-    // Sanitize HTML before insertion to prevent DOM-based XSS with DOMPurify
-    const sanitizedHtml = DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ['p', 'div', 'span', 'section', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'br', 'hr', 'blockquote', 'code', 'pre', 'style'],
-      ALLOWED_ATTR: ['class', 'href']
-    })
-    previewContainer.innerHTML = sanitizedHtml
-  } catch (error) {
-    // If parsing fails, show error message
-    if (previewContainer) {
-      previewContainer.innerHTML = ''
-      const errorEl = document.createElement('p')
-      errorEl.style.color = '#d32f2f'
-      errorEl.textContent = `Error rendering preview: ${error.message}`
-      previewContainer.appendChild(errorEl)
-    }
-  }
-}
-
-/**
- * Update selected colors and persist to localStorage
- * @param {Object} palette - The color palette object to set
- */
-export function setColors(palette) {
-  if (!palette) {
-    return
-  }
-
-  // Sanitize colors to strip extraneous properties and prevent injection attacks
-  const sanitized = sanitizeColors(palette)
-  if (!sanitized) {
-    return
-  }
-
-  selectedColors = sanitized
-
-  try {
-    localStorage.setItem('resume-colors', JSON.stringify(sanitized))
-  } catch (error) {
-    // Silently handle localStorage errors
-    console.warn('Failed to save colors to localStorage:', error)
-  }
-
-  // Update preview with new colors
-  updatePreview()
-}
-
-/**
- * Export the selected colors for use throughout the app
- */
-export function getSelectedColors() {
-  return selectedColors
+// Helper function to escape HTML
+function escapeHtml(text) {
+  const div = document.createElement('div')
+  div.textContent = text
+  return div.innerHTML
 }
 
 // Initialize the app
 function initializeApp() {
-  // Initialize module-scoped DOM elements
-  editorInput = document.getElementById('markdown-input')
-  previewContainer = document.getElementById('preview')
+  const editorInput = document.getElementById('markdown-input')
+  const previewContainer = document.getElementById('preview')
   const templateButtons = document.querySelectorAll('.template-btn')
   const exampleBtns = document.querySelectorAll('.example-btn')
   const randomizeBtn = document.getElementById('randomize-colors-btn')
+  const colorPalette = useColorPalette()
 
-  // Add null checks for critical DOM elements
-  if (!editorInput || !previewContainer) {
-    console.error('Failed to initialize: required DOM elements not found')
-    return
-  }
-
-  // Load selected template from localStorage with allowlist validation
-  const allowedTemplates = ['classic', 'minimal', 'modern']
-  const savedTemplate = localStorage.getItem('selected-template')
-  selectedTemplate = allowedTemplates.includes(savedTemplate) ? savedTemplate : 'classic'
+  // State for selected template
+  let selectedTemplate = localStorage.getItem('selected-template') || 'classic'
 
   // Check for saved content in localStorage, otherwise use default example
   const savedContent = localStorage.getItem('resume-content')
@@ -198,9 +64,7 @@ function initializeApp() {
   const debouncedUpdate = debounce(() => {
     updatePreview()
     // Save to localStorage on every input
-    if (editorInput) {
-      localStorage.setItem('resume-content', editorInput.value)
-    }
+    localStorage.setItem('resume-content', editorInput.value)
   }, 300)
 
   editorInput.addEventListener('input', debouncedUpdate)
@@ -219,8 +83,8 @@ function initializeApp() {
   if (randomizeBtn) {
     randomizeBtn.addEventListener('click', () => {
       const palette = getRandomColorPalette()
-      // Emit callback for parent component to handle color application
-      handleColorsRandomized(palette)
+      colorPalette.setCurrent(palette)
+      updatePreview()
       // Add visual feedback
       randomizeBtn.classList.add('active')
       setTimeout(() => {
@@ -242,35 +106,36 @@ function initializeApp() {
     const markdownText = editorInput.value
 
     try {
+      // Configure marked with GFM and breaks options
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      })
+
       const parsed = resumeFromMarkdown(markdownText)
+      const palette = colorPalette.current
 
       // Select the appropriate render function based on selected template
       let html = ''
       if (selectedTemplate === 'modern') {
-        html = renderModern(parsed)
+        html = renderModern(parsed, palette)
       } else if (selectedTemplate === 'minimal') {
-        html = renderMinimal(parsed)
+        html = renderMinimal(parsed, palette)
       } else {
         // Default to classic
-        html = renderClassic(parsed)
+        html = renderClassic(parsed, palette)
       }
 
-      previewContainer.innerHTML = html
+      // Sanitize HTML before insertion to prevent DOM-based XSS with DOMPurify
+      const sanitizedHtml = DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['p', 'div', 'span', 'section', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'br', 'hr', 'blockquote', 'code', 'pre', 'style'],
+        ALLOWED_ATTR: ['class', 'href']
+      })
+      previewContainer.innerHTML = sanitizedHtml
     } catch (error) {
       // If parsing fails, show error message
       previewContainer.innerHTML = `<p style="color: #d32f2f;">Error rendering preview: ${escapeHtml(error.message)}</p>`
     }
-  }
-
-  /**
-   * Handles the randomize colors callback
-   * @param {Object} palette - The color palette object with primary, secondary, accent, text, background
-   */
-  function handleColorsRandomized(palette) {
-    // Store the selected palette in localStorage for persistence
-    localStorage.setItem('selected-palette', JSON.stringify(palette))
-    // Trigger preview update to reflect color changes
-    updatePreview()
   }
 }
 

@@ -12,32 +12,19 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
- * @param {Object} [colorScheme] - Optional color scheme object
- * @param {string} [colorScheme.primary] - Used for section titles and borders
- * @param {string} [colorScheme.secondary] - Used for subtitles and metadata
- * @param {string} [colorScheme.accent] - Used for highlights
- * @param {string} [colorScheme.text] - Used for body text
- * @param {string} [colorScheme.background] - Used for page background
+ * @param {Object} [colorPalette] - The color palette object with primary, secondary, accent, text, background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderClassic(resumeObject = {}, colorScheme = {}) {
-  const { name = '', contact = {}, sections = {} } = resumeObject;
+export function renderClassic(resumeObject, colorPalette = {}) {
+  const { name, contact, sections } = resumeObject;
 
-  // Default color scheme for backward compatibility
+  // Use provided colors or defaults
   const colors = {
-    primary: colorScheme?.primary ?? '#000',
-    secondary: colorScheme?.secondary ?? '#333',
-    accent: colorScheme?.accent ?? '#000',
-    text: colorScheme?.text ?? '#000',
-    background: colorScheme?.background ?? '#fff'
-  };
-
-  // Use provided colors or fallback to defaults
-  const colorScheme = colors || {
-    primary: '#1976d2',
-    accent: '#0d47a1',
-    text: '#212121',
-    background: '#ffffff'
+    primary: colorPalette.primary || '#000',
+    secondary: colorPalette.secondary || '#333',
+    accent: colorPalette.accent || '#0066cc',
+    text: colorPalette.text || '#000',
+    background: colorPalette.background || '#fff'
   };
 
   // Build contact info line
@@ -118,7 +105,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       height: 11in;
       margin: 0 auto;
       padding: 0.5in;
-      background-color: ${colorScheme.background};
+      background-color: white;
       font-size: 11pt;
     }
 
@@ -134,7 +121,6 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       font-weight: bold;
       margin-bottom: 6pt;
       letter-spacing: 0.5pt;
-      color: ${colorScheme.primary};
     }
 
     .resume-contact {
@@ -155,12 +141,11 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       font-size: 12pt;
       font-weight: bold;
       text-transform: uppercase;
+      color: ${colors.primary};
       margin-bottom: 0.1in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid ${colors.primary};
-      color: ${colors.primary};
+      border-bottom: 2px solid ${colors.secondary};
       letter-spacing: 1pt;
-      color: ${colorScheme.primary};
     }
 
     .section-content {
@@ -175,8 +160,8 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
     .item-title {
       font-weight: bold;
       font-size: 11pt;
+      color: ${colors.primary};
       margin-bottom: 2pt;
-      color: ${colors.accent};
     }
 
     .item-meta {
@@ -196,7 +181,6 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       text-align: right;
       white-space: nowrap;
       margin-left: 10pt;
-      color: ${colors.secondary};
     }
 
     .item-description {
@@ -211,7 +195,7 @@ export function renderClassic(resumeObject = {}, colorScheme = {}) {
       body {
         margin: 0;
         padding: 0;
-        background-color: ${colors.background};
+        background-color: white;
       }
 
       .resume-container {

@@ -3,33 +3,30 @@
  * Contemporary two-column layout with accent colors and clean typography
  *
  * @param {Object} resumeObject - The resume data object
- * @param {Object} [colors] - Color palette object
- * @param {string} [colors.primary] - Primary color
- * @param {string} [colors.accent] - Accent color
- * @param {string} [colors.text] - Text color
- * @param {string} [colors.background] - Background color
+ * @param {Object} [colorPalette] - The color palette object with primary, secondary, accent, text, background
+ * @returns {string} Complete HTML string for the resume
  */
 
-export function renderModern(resumeObject, colorScheme) {
+export function renderModern(resumeObject, colorPalette = {}) {
   const {
     name = '',
-    contact = {},
+    email = '',
+    phone = '',
+    location = '',
     summary = '',
-    skills = [],
-    sections = {}
+    experience = [],
+    education = [],
+    skills = []
   } = resumeObject;
 
-  // Default color scheme
-  const defaultColors = {
-    primary: '#2563eb',
-    secondary: '#7f8c8d',
-    accent: '#2563eb',
-    text: '#2c3e50',
-    background: '#f8f9fa'
+  // Use provided colors or defaults
+  const colors = {
+    primary: colorPalette.primary || '#2563eb',
+    secondary: colorPalette.secondary || '#3b82f6',
+    accent: colorPalette.accent || '#60a5fa',
+    text: colorPalette.text || '#2c3e50',
+    background: colorPalette.background || '#f8f9fa'
   };
-
-  // Use provided colors or fall back to defaults
-  const colors = colorScheme || defaultColors;
 
   const skillsText = Array.isArray(skills)
     ? skills.map(skill =>
@@ -82,14 +79,14 @@ export function renderModern(resumeObject, colorScheme) {
     .name {
       font-size: 28px;
       font-weight: 700;
-      color: ${colorScheme.primary};
+      color: #1a202c;
       margin-bottom: 8px;
       letter-spacing: -0.5px;
     }
 
     .contact-info {
       font-size: 12px;
-      color: ${colorScheme.text};
+      color: #7f8c8d;
       line-height: 1.8;
       word-break: break-word;
     }
@@ -107,7 +104,7 @@ export function renderModern(resumeObject, colorScheme) {
       margin-top: 25px;
       margin-bottom: 12px;
       padding-bottom: 8px;
-      border-bottom: 2px solid ${colors.primary};
+      border-bottom: 2px solid ${colors.secondary};
     }
 
     .sidebar-section {
@@ -116,14 +113,14 @@ export function renderModern(resumeObject, colorScheme) {
 
     .sidebar-item {
       font-size: 12px;
-      color: ${colorScheme.text};
+      color: #555;
       margin-bottom: 8px;
       line-height: 1.5;
     }
 
     .sidebar-item-label {
       font-weight: 600;
-      color: ${colorScheme.primary};
+      color: #1a202c;
       font-size: 11px;
       margin-top: 10px;
       margin-bottom: 4px;
@@ -132,7 +129,7 @@ export function renderModern(resumeObject, colorScheme) {
     .summary {
       margin-bottom: 30px;
       font-size: 13px;
-      color: ${colorScheme.text};
+      color: #555;
       line-height: 1.7;
     }
 
@@ -143,12 +140,12 @@ export function renderModern(resumeObject, colorScheme) {
     .section-title {
       font-size: 14px;
       font-weight: 700;
-      color: ${colorScheme.primary};
+      color: ${colors.primary};
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 15px;
       padding-bottom: 8px;
-      border-bottom: 2px solid ${colors.primary};
+      border-bottom: 2px solid ${colors.secondary};
     }
 
     .entry {
@@ -172,24 +169,24 @@ export function renderModern(resumeObject, colorScheme) {
     .entry-title {
       font-size: 13px;
       font-weight: 600;
-      color: ${colorScheme.primary};
+      color: ${colors.primary};
     }
 
     .entry-subtitle {
       font-size: 12px;
-      color: ${colorScheme.text};
+      color: ${colors.secondary};
       font-weight: 500;
     }
 
     .entry-date {
       font-size: 11px;
-      color: ${colorScheme.accent};
+      color: #95a5a6;
       white-space: nowrap;
     }
 
     .entry-description {
       font-size: 12px;
-      color: ${colorScheme.text};
+      color: ${colors.text};
       line-height: 1.5;
       margin-top: 5px;
     }
@@ -205,19 +202,19 @@ export function renderModern(resumeObject, colorScheme) {
     .degree {
       font-size: 12px;
       font-weight: 600;
-      color: ${colorScheme.primary};
+      color: ${colors.primary};
       margin-bottom: 2px;
     }
 
     .school {
       font-size: 11px;
-      color: ${colorScheme.text};
+      color: ${colors.secondary};
       margin-bottom: 2px;
     }
 
     .graduation {
       font-size: 11px;
-      color: ${colorScheme.accent};
+      color: #95a5a6;
     }
 
     .skills-grid {
@@ -228,7 +225,7 @@ export function renderModern(resumeObject, colorScheme) {
 
     .skills-list {
       font-size: 12px;
-      color: ${colorScheme.text};
+      color: ${colors.text};
       line-height: 1.6;
     }
 
@@ -338,19 +335,23 @@ export function renderModern(resumeObject, colorScheme) {
       <div class="section">
         <div class="section-title">Experience</div>
         ${experience.map(job => {
-          const title = job.title || '';
-          const subtitle = job.subtitle || '';
-          const date = job.date || '';
-          const description = job.description || '';
+          const title = job.title || job.position || '';
+          const company = job.company || job.employer || '';
+          const startDate = job.startDate || job.start || '';
+          const endDate = job.endDate || job.end || '';
+          const location = job.location || '';
+          const description = job.description || job.summary || '';
+
+          const dateRange = [startDate, endDate].filter(Boolean).join(' - ') || '';
 
           return `
           <div class="entry">
             <div class="entry-header">
               <div>
                 <div class="entry-title">${escapeHtml(title)}</div>
-                ${subtitle ? `<div class="entry-subtitle">${escapeHtml(subtitle)}</div>` : ''}
+                <div class="entry-subtitle">${escapeHtml(company)}${location ? ' • ' + escapeHtml(location) : ''}</div>
               </div>
-              ${date ? `<div class="entry-date">${escapeHtml(date)}</div>` : ''}
+              ${dateRange ? `<div class="entry-date">${escapeHtml(dateRange)}</div>` : ''}
             </div>
             ${description ? `<div class="entry-description">${escapeHtml(description)}</div>` : ''}
           </div>
@@ -363,15 +364,15 @@ export function renderModern(resumeObject, colorScheme) {
       <div class="section">
         <div class="section-title">Education</div>
         ${education.map(edu => {
-          const title = edu.title || '';
-          const subtitle = edu.subtitle || '';
-          const date = edu.date || '';
+          const degree = edu.degree || edu.name || '';
+          const school = edu.school || edu.institution || '';
+          const graduation = edu.graduationDate || edu.date || '';
 
           return `
           <div class="education-entry">
-            ${title ? `<div class="degree">${escapeHtml(title)}</div>` : ''}
-            ${subtitle ? `<div class="school">${escapeHtml(subtitle)}</div>` : ''}
-            ${date ? `<div class="graduation">${escapeHtml(date)}</div>` : ''}
+            <div class="degree">${escapeHtml(degree)}</div>
+            ${school ? `<div class="school">${escapeHtml(school)}</div>` : ''}
+            ${graduation ? `<div class="graduation">${escapeHtml(graduation)}</div>` : ''}
           </div>
           `;
         }).join('')}
