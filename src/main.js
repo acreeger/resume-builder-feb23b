@@ -1,9 +1,21 @@
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import { examples } from './examples.js'
 import { resumeFromMarkdown } from './parser.js'
 import { renderClassic } from './templates/classic.js'
 import { renderModern } from './templates/modern.js'
 import { renderMinimal } from './templates/minimal.js'
+import { useColorPalette } from './colorState.js'
+import { getRandomColorPalette } from './utils/colorPalettes.js'
+
+// Debounce function to limit how often a function is called
+function debounce(func, delay) {
+  let timeoutId
+  return function(...args) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => func.apply(this, args), delay)
+  }
+}
 
 // Helper function to escape HTML
 function escapeHtml(text) {
@@ -18,6 +30,8 @@ function initializeApp() {
   const previewContainer = document.getElementById('preview')
   const templateButtons = document.querySelectorAll('.template-btn')
   const exampleBtns = document.querySelectorAll('.example-btn')
+  const randomizeBtn = document.getElementById('randomize-colors-btn')
+  const colorPalette = useColorPalette()
 
   // State for selected template
   let selectedTemplate = localStorage.getItem('selected-template') || 'classic'
@@ -46,12 +60,14 @@ function initializeApp() {
     })
   })
 
-  // Set up live preview and localStorage persistence on input
-  editorInput.addEventListener('input', () => {
+  // Set up live preview and localStorage persistence on input with debouncing
+  const debouncedUpdate = debounce(() => {
     updatePreview()
     // Save to localStorage on every input
     localStorage.setItem('resume-content', editorInput.value)
-  })
+  }, 300)
+
+  editorInput.addEventListener('input', debouncedUpdate)
 
   // Set up template switcher event listeners
   templateButtons.forEach(button => {
@@ -62,6 +78,20 @@ function initializeApp() {
       updatePreview()
     })
   })
+
+  // Set up randomize colors button
+  if (randomizeBtn) {
+    randomizeBtn.addEventListener('click', () => {
+      const palette = getRandomColorPalette()
+      colorPalette.setCurrent(palette)
+      updatePreview()
+      // Add visual feedback
+      randomizeBtn.classList.add('active')
+      setTimeout(() => {
+        randomizeBtn.classList.remove('active')
+      }, 600)
+    })
+  }
 
   function updateActiveTemplateButton() {
     templateButtons.forEach(button => {
@@ -76,20 +106,32 @@ function initializeApp() {
     const markdownText = editorInput.value
 
     try {
+      // Configure marked with GFM and breaks options
+      marked.setOptions({
+        breaks: true,
+        gfm: true
+      })
+
       const parsed = resumeFromMarkdown(markdownText)
+      const palette = colorPalette.current
 
       // Select the appropriate render function based on selected template
       let html = ''
       if (selectedTemplate === 'modern') {
-        html = renderModern(parsed)
+        html = renderModern(parsed, palette)
       } else if (selectedTemplate === 'minimal') {
-        html = renderMinimal(parsed)
+        html = renderMinimal(parsed, palette)
       } else {
         // Default to classic
-        html = renderClassic(parsed)
+        html = renderClassic(parsed, palette)
       }
 
-      previewContainer.innerHTML = html
+      // Sanitize HTML before insertion to prevent DOM-based XSS with DOMPurify
+      const sanitizedHtml = DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['p', 'div', 'span', 'section', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'br', 'hr', 'blockquote', 'code', 'pre', 'style'],
+        ALLOWED_ATTR: ['class', 'href']
+      })
+      previewContainer.innerHTML = sanitizedHtml
     } catch (error) {
       // If parsing fails, show error message
       previewContainer.innerHTML = `<p style="color: #d32f2f;">Error rendering preview: ${escapeHtml(error.message)}</p>`

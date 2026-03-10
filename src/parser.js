@@ -39,6 +39,12 @@ export function resumeFromMarkdown(markdown) {
     throw new Error('Markdown input must be a non-empty string');
   }
 
+  // Prevent ReDoS attacks on marked library by limiting input length
+  const MAX_INPUT_LENGTH = 50000;
+  if (markdown.length > MAX_INPUT_LENGTH) {
+    throw new Error(`Markdown input exceeds maximum length of ${MAX_INPUT_LENGTH} characters`);
+  }
+
   try {
     const tokens = marked.lexer(markdown);
 
@@ -131,7 +137,7 @@ export function schemaToObject(raw) {
  * @returns {Object} Sections indexed by name
  */
 function parseSections(tokens, startIndex) {
-  const sections = {};
+  const sections = Object.create(null);
   let currentSection = null;
   let currentItems = [];
 

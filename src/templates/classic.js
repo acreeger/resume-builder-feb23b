@@ -12,10 +12,20 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
+ * @param {Object} [colorPalette] - The color palette object with primary, secondary, accent, text, background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderClassic(resumeObject) {
+export function renderClassic(resumeObject, colorPalette = {}) {
   const { name, contact, sections } = resumeObject;
+
+  // Use provided colors or defaults
+  const colors = {
+    primary: colorPalette.primary || '#000',
+    secondary: colorPalette.secondary || '#333',
+    accent: colorPalette.accent || '#0066cc',
+    text: colorPalette.text || '#000',
+    background: colorPalette.background || '#fff'
+  };
 
   // Build contact info line
   const contactItems = [];
@@ -85,8 +95,8 @@ export function renderClassic(resumeObject) {
     body {
       font-family: Georgia, 'Times New Roman', Times, serif;
       line-height: 1.6;
-      color: #000;
-      background-color: #fff;
+      color: ${colors.text};
+      background-color: ${colors.background};
       padding: 0;
     }
 
@@ -103,7 +113,7 @@ export function renderClassic(resumeObject) {
       text-align: center;
       margin-bottom: 0.3in;
       padding-bottom: 0.15in;
-      border-bottom: 2px solid #000;
+      border-bottom: 2px solid ${colors.primary};
     }
 
     .resume-name {
@@ -115,7 +125,7 @@ export function renderClassic(resumeObject) {
 
     .resume-contact {
       font-size: 10pt;
-      color: #000;
+      color: ${colors.text};
     }
 
     .resume-content {
@@ -131,9 +141,10 @@ export function renderClassic(resumeObject) {
       font-size: 12pt;
       font-weight: bold;
       text-transform: uppercase;
+      color: ${colors.primary};
       margin-bottom: 0.1in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid #000;
+      border-bottom: 2px solid ${colors.secondary};
       letter-spacing: 1pt;
     }
 
@@ -149,6 +160,7 @@ export function renderClassic(resumeObject) {
     .item-title {
       font-weight: bold;
       font-size: 11pt;
+      color: ${colors.primary};
       margin-bottom: 2pt;
     }
 
@@ -162,7 +174,7 @@ export function renderClassic(resumeObject) {
 
     .item-subtitle {
       font-style: italic;
-      color: #333;
+      color: ${colors.secondary};
     }
 
     .item-date {
@@ -175,7 +187,7 @@ export function renderClassic(resumeObject) {
       font-size: 10pt;
       line-height: 1.4;
       margin-left: 0;
-      color: #000;
+      color: ${colors.text};
     }
 
     /* Print styles */

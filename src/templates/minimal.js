@@ -12,10 +12,20 @@
  * @param {string} [resumeObject.contact.location] - Location
  * @param {string} [resumeObject.contact.github] - GitHub profile
  * @param {Object} resumeObject.sections - Resume sections
+ * @param {Object} [colorPalette] - The color palette object with primary, secondary, accent, text, background
  * @returns {string} Complete HTML string for the resume
  */
-export function renderMinimal(resumeObject) {
+export function renderMinimal(resumeObject, colorPalette = {}) {
   const { name, contact, sections } = resumeObject;
+
+  // Use provided colors or defaults
+  const colors = {
+    primary: colorPalette.primary || '#000',
+    secondary: colorPalette.secondary || '#555',
+    accent: colorPalette.accent || '#0066cc',
+    text: colorPalette.text || '#000',
+    background: colorPalette.background || '#fff'
+  };
 
   // Build contact info line
   const contactItems = [];
@@ -85,8 +95,8 @@ export function renderMinimal(resumeObject) {
     body {
       font-family: system-ui, -apple-system, sans-serif;
       line-height: 1.7;
-      color: #000;
-      background-color: #fff;
+      color: ${colors.text};
+      background-color: ${colors.background};
       padding: 0;
     }
 
@@ -113,7 +123,7 @@ export function renderMinimal(resumeObject) {
 
     .resume-contact {
       font-size: 9pt;
-      color: #000;
+      color: ${colors.text};
       line-height: 1.5;
     }
 
@@ -129,10 +139,11 @@ export function renderMinimal(resumeObject) {
     .section-title {
       font-size: 10pt;
       font-weight: 600;
+      color: ${colors.primary};
       text-transform: uppercase;
       margin-bottom: 0.15in;
       padding-bottom: 0.08in;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 2px solid ${colors.secondary};
       letter-spacing: 0.5pt;
     }
 
@@ -148,6 +159,7 @@ export function renderMinimal(resumeObject) {
     .item-title {
       font-weight: 500;
       font-size: 10pt;
+      color: ${colors.primary};
       margin-bottom: 2pt;
     }
 
@@ -162,7 +174,7 @@ export function renderMinimal(resumeObject) {
 
     .item-subtitle {
       font-weight: 400;
-      color: #555;
+      color: ${colors.secondary};
     }
 
     .item-date {
@@ -175,7 +187,7 @@ export function renderMinimal(resumeObject) {
       font-size: 9pt;
       line-height: 1.5;
       margin-left: 0;
-      color: #000;
+      color: ${colors.text};
     }
 
     /* Print styles */
